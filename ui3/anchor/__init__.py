@@ -312,29 +312,23 @@ class At:
         def get_attribute(self, prop=None):
             prop = prop or self.prop
             if prop in At.Anchor._rules:
-                target_attribute = At.Anchor._rules[prop]['target']['attribute']
-            else:
-                target_attribute = At.Anchor._rules['attr']['target']['attribute']
-                target_attribute = target_attribute.replace(
+                return At.Anchor._rules[prop]['target']['attribute']
+            target_attribute = At.Anchor._rules['attr']['target']['attribute']
+            return target_attribute.replace(
                     '_custom', prop)
-            return target_attribute
                 
         def get_source_value(self, container_type):
             if self.prop in At.Anchor._rules:
-                source_value = At.Anchor._rules[self.prop]['source'][container_type]
-            else:
-                source_value = At.Anchor._rules['attr']['source']['regular']
-                source_value = source_value.replace('_custom', self.prop)
-            return source_value
+                return At.Anchor._rules[self.prop]['source'][container_type]
+            source_value = At.Anchor._rules['attr']['source']['regular']
+            return source_value.replace('_custom', self.prop)
             
         def get_target_value(self, prop=None):
             prop = prop or self.prop
             if prop in At.Anchor._rules:
-                target_value = At.Anchor._rules[prop]['target']['value']
-            else:
-                target_value = At.Anchor._rules['attr']['target']['value']
-                target_value = target_value.replace('_custom', prop)
-            return target_value
+                return At.Anchor._rules[prop]['target']['value']
+            target_value = At.Anchor._rules['attr']['target']['value']
+            return target_value.replace('_custom', prop)
                 
         def check_for_warnings(self, source):
             
@@ -351,12 +345,11 @@ class At:
                         ConstraintWarning('Unusual constraint combination'),
                         stacklevel=5,
                     )
-            if self.at.superview_warnings:
-                if not self.at.view.superview:
-                    warnings.warn(
-                        ConstraintWarning('Probably missing superview'),
-                        stacklevel=5,
-                    )
+            if self.at.superview_warnings and not self.at.view.superview:
+                warnings.warn(
+                    ConstraintWarning('Probably missing superview'),
+                    stacklevel=5,
+                )
                 
         def record(self, constraint):
             if constraint.source == self:
@@ -375,7 +368,7 @@ class At:
             h = set([*self.HORIZONTALS, 'center'])
             v = set([*self.VERTICALS, 'center'])
             #active = set(self.at.target_for.keys())
-            active = set([constraint.target.prop for constraint in self.at.target_for])
+            active = {constraint.target.prop for constraint in self.at.target_for}
             horizontals = active.intersection(h)
             verticals = active.intersection(v)
             if len(horizontals) > 2:
@@ -408,7 +401,7 @@ class At:
                 line = line.strip()
                 if line.endswith(':'):
                     key = line[:-1].strip()
-                    new_dict = dict()
+                    new_dict = {}
                     dicts[-1][key] = new_dict
                     dicts.append(new_dict)
                 else:
@@ -616,13 +609,12 @@ class At:
             return at
 
     def _prop(attribute):
-        p = property(
+        return property(
             lambda self:
                 partial(At._getter, self, attribute)(),
             lambda self, value:
                 partial(At._setter, self, attribute, value)()
         )
-        return p
 
     def _getter(self, attr_string):
         return At.Anchor(self, attr_string)

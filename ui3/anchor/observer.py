@@ -40,7 +40,7 @@ class NSKeyValueObserving(ObjCDelegate):
                     removeObserver_forKeyPath_(self, key)
             
     def stop_all(self):
-        for target in list(self.targets.values()):
+        for _ in list(self.targets.values()):
             for key in self.observeattrs:
                 objc_target.layer().\
                 removeObserver_forKeyPath_(self, key)

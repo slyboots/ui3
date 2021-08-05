@@ -73,11 +73,10 @@ class GridView(ui.View):
             cand_x = oper[0](count_x)
             cand_y = oper[1](count_y)
             diff = cand_x * cand_y - count
-            if diff >= 0:
-                if best is None or diff < best:
-                    best = diff
-                    best_x = cand_x
-                    best_y = cand_y
+            if diff >= 0 and (best is None or diff < best):
+                best = diff
+                best_x = cand_x
+                best_y = cand_y
         return best_x, best_y
 
     def layout(self):
@@ -124,10 +123,10 @@ class GridView(ui.View):
 
         subviews = iter(self.subviews)
         y = self.border_width + (per_free_y if self.top_free else self.gap)
-        for row in range(count_y):
+        for _ in range(count_y):
             x = self.border_width + (per_free_x
                                      if self.leading_free else self.gap)
-            for col in range(count_x):
+            for _ in range(count_x):
                 try:
                     view = next(subviews)
                 except StopIteration:
