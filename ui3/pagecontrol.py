@@ -82,7 +82,11 @@ class PageControl(ui.View):
         return UIColor.colorWithRed_green_blue_alpha_(*ui.parse_color(color))
 
     def _py_color(self, objc_color):
-        return tuple([c.floatValue() for c in objc_color.arrayFromRGBAComponents()]) if objc_color else None
+        return (
+            tuple(c.floatValue() for c in objc_color.arrayFromRGBAComponents())
+            if objc_color
+            else None
+        )
 
     def _trigger_delegate(self):
         try:

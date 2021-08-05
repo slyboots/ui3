@@ -14,9 +14,9 @@ class ObjCPlus:
             objc_superclass = getattr(
                 cls, '_objc_superclass', objc_util.NSObject)
             objc_debug = getattr(cls, '_objc_debug', True)
-            
+
             #'TempClass_'+str(uuid.uuid4())[-12:]
-            
+
             objc_methods = []
             objc_classmethods = []
             for key in cls.__dict__:
@@ -41,7 +41,7 @@ class ObjCPlus:
                 objc_protocols = [cls.__name__]
             else:
                 objc_protocols = getattr(cls, '_objc_protocols', [])
-            if not type(objc_protocols) is list:
+            if type(objc_protocols) is not list:
                 objc_protocols = [objc_protocols]
             cls._objc_class = objc_class = objc_util.create_objc_class(
                 objc_class_name,
@@ -51,13 +51,13 @@ class ObjCPlus:
                 protocols=objc_protocols,
                 debug=objc_debug
             )
-        
+
         instance = objc_class.alloc().init()
 
         for key in dir(cls):
             value = getattr(cls, key)
             if inspect.isfunction(value):
-                if not '_self' in inspect.signature(value).parameters:
+                if '_self' not in inspect.signature(value).parameters:
                     setattr(instance, key, types.MethodType(value, instance))
                 if key == '__init__':
                     value(instance, *args, **kwargs)

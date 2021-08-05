@@ -310,9 +310,9 @@ class ObjCPlus:
             objc_superclass = getattr(
                 cls, '_objc_superclass', NSObject)
             objc_debug = getattr(cls, '_objc_debug', True)
-            
+
             #'TempClass_'+str(uuid.uuid4())[-12:]
-            
+
             objc_methods = []
             objc_classmethods = []
             for key in cls.__dict__:
@@ -328,7 +328,7 @@ class ObjCPlus:
                 objc_protocols = cls.__name__
             else:
                 objc_protocols = getattr(cls, '_objc_protocols', [])
-            if not type(objc_protocols) is list:
+            if type(objc_protocols) is not list:
                 objc_protocols = [objc_protocols]
             cls._objc_class = objc_class = create_objc_class(
                 objc_class_name,
@@ -338,14 +338,16 @@ class ObjCPlus:
                 protocols=objc_protocols,
                 debug=objc_debug
             )
-        
+
         instance = objc_class.alloc().init()
 
         for key in dir(cls):
             value = getattr(cls, key)
             if inspect.isfunction(value):
-                if (not key.startswith('__') and 
-                not '_self' in inspect.signature(value).parameters):
+                if (
+                    not key.startswith('__')
+                    and '_self' not in inspect.signature(value).parameters
+                ):
                     setattr(instance, key, types.MethodType(value, instance))
                 if key == '__init__':
                     value(instance, *args, **kwargs)
@@ -584,9 +586,7 @@ def pinch(view, action):
     * `velocity` - Current velocity of the pinch gesture as scale
       per second.
     """
-    handler = UIGestureRecognizerDelegate(UIPinchGestureRecognizer, view, action)
-
-    return handler
+    return UIGestureRecognizerDelegate(UIPinchGestureRecognizer, view, action)
 
 @on_main_thread
 def rotation(view, action):
@@ -601,9 +601,7 @@ def rotation(view, action):
     * `velocity` - Current velocity of the rotation gesture as radians
       per second.
     """
-    handler = UIGestureRecognizerDelegate(UIRotationGestureRecognizer, view, action)
-
-    return handler
+    return UIGestureRecognizerDelegate(UIRotationGestureRecognizer, view, action)
 
 @on_main_thread
 def swipe(view, action,
@@ -733,8 +731,7 @@ def _to_pyobject(item):
             return None
         address_str = str(data)[len(drag_and_drop_prefix):]
         address = int(address_str)
-        result = ctypes.cast(address, ctypes.py_object).value
-        return result
+        return ctypes.cast(address, ctypes.py_object).value
     except Exception as e:
         return None
 
@@ -832,7 +829,6 @@ class UIDropInteractionDelegate(ObjCDelegate):
                     if not accept_func(payload, sender, self.view):
                         proposal = 1 # UIDropOperationForbidden
         else:
-            pass
             '''
             if self.accept_type is None:
                 proposal = 1

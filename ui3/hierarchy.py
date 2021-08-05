@@ -94,9 +94,7 @@ class Views(dict):
                     assert (
                         not keyword.iskeyword(view_name)
                     ), f'Cannot use a keyword as a view name ({view_name})'
-                    assert (
-                        not view_name in dir(self)
-                    ), f'{view_name} is a member of Views class'
+                    assert view_name not in dir(self), f'{view_name} is a member of Views class'
 
                     previous_view = view = view_class(name=view_name)
                     if parent:

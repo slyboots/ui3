@@ -52,9 +52,9 @@ class Action:
         
     def _update_objc_action(self):
         a = self._objc_action
-        
+
         a.setTitle_(self.title)
-        
+
         if not self.image:
             a.setImage_(None)
         else:
@@ -65,12 +65,12 @@ class Action:
             if self.destructive:
                 image = image.imageWithTintColor_(objc_util.UIColor.systemRedColor())
             a.setImage_(image)
-        
-        if not self.attributes is None:
+
+        if self.attributes is not None:
             a.setAttributes_(self.attributes)
-        
+
         a.state = self.state
-        
+
         if self.discoverability_title:
             a.setDiscoverabilityTitle_(self.discoverability_title)
 
@@ -78,13 +78,12 @@ class Action:
             self._menu.create_or_update()
         
     def _prop(attribute):
-        p = property(
+        return property(
             lambda self:
                 partial(Action._getter, self, attribute)(),
             lambda self, value:
                 partial(Action._setter, self, attribute, value)()
         )
-        return p
 
     def _getter(self, attr_string):
         return getattr(self, f'_{attr_string}')
@@ -109,13 +108,12 @@ class Action:
         self.state = self.SELECTED if value else self.REGULAR
     
     def _attr_prop(bitmask):
-        p = property(
+        return property(
             lambda self:
                 partial(Action._attr_getter, self, bitmask)(),
             lambda self, value:
                 partial(Action._attr_setter, self, bitmask, value)()
         )
-        return p
         
     def _attr_getter(self, bitmask):
         return bool(self.attributes and self.attributes & bitmask)
@@ -124,11 +122,10 @@ class Action:
         if not self.attributes:
             if value:
                 self.attributes = bitmask
+        elif value:
+            self.attributes |= bitmask
         else:
-            if value:
-                self.attributes |= bitmask
-            else:
-                self.attributes &= ~bitmask
+            self.attributes &= ~bitmask
     
     hidden = _attr_prop(HIDDEN)
     destructive = _attr_prop(DESTRUCTIVE)
