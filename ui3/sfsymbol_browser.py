@@ -21,19 +21,23 @@ class SymbolSource:
         self.tableview = tableview
         tableview.row_height = 50
         self.weight = THIN
-        
+
         self.symbol_names = json.loads(
             (Path(__file__).parent / 'sfsymbolnames-2_1.json').read_text())
-        
-        self.restricted = set([
+
+        self.restricted = {
             symbol['symbolName']
-            for symbol
-            in json.loads(
-                (Path(__file__).parent / 'sfsymbols-restricted-2_1.json').read_text())])
+            for symbol in json.loads(
+                (
+                    Path(__file__).parent / 'sfsymbols-restricted-2_1.json'
+                ).read_text()
+            )
+        }
+
 
         self.index = 0
         self.update_list_to_display()
-        
+
         self.prev_button = ui.ButtonItem(
           tint_color='black',
           image=SymbolImage('arrow.up', 8, weight=THIN),
@@ -62,7 +66,7 @@ class SymbolSource:
           enabled=True,
           action=self.change_weight,
         )
-      
+
         root.left_button_items = [
             self.to_start_button,
             self.prev_button]
@@ -220,22 +224,26 @@ class SymbolMatrix(ui.View):
             frame=self.bounds, flex='WH',
         )
         self.add_subview(self.scrollview)
-        
+
         self.symbol_names = json.loads(
             (Path(__file__).parent / 'sfsymbolnames-2_1.json').read_text())
-        
-        self.restricted = set([
+
+        self.restricted = {
             symbol['symbolName']
-            for symbol
-            in json.loads(
-                (Path(__file__).parent / 'sfsymbols-restricted-2_1.json').read_text())])
-                
+            for symbol in json.loads(
+                (
+                    Path(__file__).parent / 'sfsymbols-restricted-2_1.json'
+                ).read_text()
+            )
+        }
+
+
         horizontal_item_limit = int(math.sqrt(len(self.symbol_names)))
-        
+
         first_of_line = None
         for i, symbol_name in enumerate(self.symbol_names):
             tint_color = 'orange' if symbol_name in self.restricted else 'white'
-        
+
             symbol_image = SymbolImage(
                 symbol_name, 
                 point_size=14, 
@@ -253,7 +261,7 @@ class SymbolMatrix(ui.View):
             )
             symbol_button.symbol_name = symbol_name
             self.scrollview.container.add_subview(symbol_button)
-            
+
             if not first_of_line:
                 symbol_button.x = 8
                 symbol_button.y = 8

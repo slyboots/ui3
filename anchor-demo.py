@@ -113,10 +113,7 @@ menu_button.width = menu_button.height
 dock(menu_button).top_left(main_content, At.TIGHT)
 
 def open_and_close(sender):
-    if main_content.x == 0:
-        main_content.x = -sidebar.x
-    else:
-        main_content.x = 0
+    main_content.x = -sidebar.x if main_content.x == 0 else 0
         
 menu_button.action = open_and_close
 
